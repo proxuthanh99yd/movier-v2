@@ -1,0 +1,7 @@
+[[redirects]]
+  force = true
+  from = "https://www.themoviedb.org/authenticate/*"
+  to = "https://movier-v2.netlify.app/approved"
+  status = 200
+  [redirect.headers]
+    x-from = "Netlify"

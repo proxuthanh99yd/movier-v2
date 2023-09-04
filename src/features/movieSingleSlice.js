@@ -24,7 +24,7 @@ export const addMovieRated = createAsyncThunk('movie/addMovieRated',
 export const fetchMovieSingle = createAsyncThunk('movie/fetchMovieSingle',
     async (id) => {
         const auth = JSON.parse(localStorage.getItem("auth"));
-        if (!auth) {
+        if (!auth?.sessionId) {
             const movie = await movieSingleApi(id);
             return movie;
         }
