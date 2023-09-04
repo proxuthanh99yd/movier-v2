@@ -18,7 +18,7 @@ function Star({ number }) {
     );
 }
 
-UserReviews.propTypes = { reviews: PropTypes.array };
+UserReviews.propTypes = { reviews: PropTypes.object };
 
 export default function UserReviews({ reviews }) {
     return (

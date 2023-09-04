@@ -16,6 +16,8 @@ TabOverview.propTypes = {
     vote: PropTypes.number,
     firstAirDate: PropTypes.string,
     lastAirDate: PropTypes.string,
+    reviews: PropTypes.object,
+    images: PropTypes.array,
 };
 export default function TabOverview({
     overview,
