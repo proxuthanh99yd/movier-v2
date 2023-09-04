@@ -1,5 +1,10 @@
 import { styled } from "styled-components";
 import { images } from "../../imageConfig";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { linkTo } from "../../routes";
+
+SidebarBottom.propTypes = { person: PropTypes.array };
 
 export default function SidebarBottom({ person }) {
     return (
@@ -16,7 +21,7 @@ export default function SidebarBottom({ person }) {
                     known_for_department: department,
                 }) => (
                     <div key={id} className="celeb-item">
-                        <a href="#">
+                        <Link to={linkTo.person + id}>
                             <img
                                 src={
                                     images.secure_base_url +
@@ -27,10 +32,12 @@ export default function SidebarBottom({ person }) {
                                 width="70"
                                 height="70"
                             />
-                        </a>
+                        </Link>
                         <div className="celeb-author">
                             <h6>
-                                <a href="#">{name || originalName}</a>
+                                <Link to={linkTo.person + id}>
+                                    {name || originalName}
+                                </Link>
                             </h6>
                             <span>{department}</span>
                         </div>

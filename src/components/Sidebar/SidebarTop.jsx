@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 import { images } from "../../imageConfig";
 
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { linkTo } from "../../routes";
 
 SidebarTop.propTypes = { moviesFavorite: PropTypes.array };
 
@@ -27,7 +29,9 @@ export default function SidebarTop({ moviesFavorite }) {
                             <span>{item.vote_average.toFixed(1)}</span> /10
                         </span>
                         <h5>
-                            <a href="#">{item.title || item.original_title}</a>
+                            <Link to={linkTo.movie + item.id}>
+                                {item.title || item.original_title}
+                            </Link>
                         </h5>
                     </div>
                 ))}

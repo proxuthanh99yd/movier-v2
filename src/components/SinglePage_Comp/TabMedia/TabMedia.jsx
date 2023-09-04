@@ -1,21 +1,21 @@
 import { styled } from "styled-components";
 import { images as imageConfig } from "../../../imageConfig";
-import { useSelector } from "react-redux";
+import PropTypes from "prop-types";
 
-export default function TabMedia() {
-    const { images, videos, imageLoading } = useSelector(
-        (state) => state.movie
-    );
-    if (imageLoading === "loading") {
-        return <p>loading...</p>;
-    }
+TabMedia.propTypes = {
+    name: PropTypes.string,
+    images: PropTypes.array,
+    videos: PropTypes.array,
+};
+
+export default function TabMedia({ name, images, videos }) {
     return (
         <Media>
             <div className="row">
                 <div className="rv-hd">
                     <div>
                         <h3>Videos &amp; Photos of</h3>
-                        <h2>Skyfall: Quantum of Spectre</h2>
+                        <h2>{name}</h2>
                     </div>
                 </div>
                 <div className="title-hd-sm">

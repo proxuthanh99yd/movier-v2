@@ -1,12 +1,26 @@
 import { styled } from "styled-components";
 import PropTypes from "prop-types";
 import { images } from "../../../imageConfig";
-import { useSelector } from "react-redux";
 TabCast.propTypes = {
     name: PropTypes.string,
+    cast: PropTypes.array,
+    crew: PropTypes.array,
 };
-export default function TabCast({ name }) {
-    const { crew, cast } = useSelector((state) => state.movie);
+export default function TabCast({ name, cast, crew }) {
+    const directors = crew.filter((director) => {
+        if (director?.jobs && director?.jobs[0].job === "Director") {
+            return { ...director };
+        } else if (director?.job === "Director") {
+            return director;
+        }
+    });
+    const writers = crew.filter((writer) => {
+        if (writer?.jobs && writer?.jobs[0].job === "Writer") {
+            return writer;
+        } else if (writer?.job === "Writer") {
+            return writer;
+        }
+    });
     return (
         <Cast>
             <div className="row">
@@ -17,67 +31,34 @@ export default function TabCast({ name }) {
                     <h4>Directors &amp; Credit Writers</h4>
                 </div>
                 <div className="mvcast-item">
-                    {crew.map((crew) => {
-                        if (crew.job === "Director") {
-                            return (
-                                <div key={crew.id} className="cast-it">
-                                    <div className="cast-left">
-                                        <h4>
-                                            {crew.name.split(" ")[0].charAt(0) +
-                                                crew.name
-                                                    .split(" ")[1]
-                                                    .charAt(0)}
-                                        </h4>
-                                        <a href="#">
-                                            {crew.name || crew.original_name}
-                                        </a>
-                                    </div>
-                                    <p>... Director</p>
-                                </div>
-                            );
-                        }
-                        if (crew.job === "Writer") {
-                            return (
-                                <div key={crew.id} className="cast-it">
-                                    <div className="cast-left">
-                                        <h4>
-                                            {crew.name.split(" ")[0].charAt(0) +
-                                                crew.name
-                                                    .split(" ")[1]
-                                                    .charAt(0)}
-                                        </h4>
-                                        <a href="#">
-                                            {crew.name || crew.original_name}
-                                        </a>
-                                    </div>
-                                    <p>... Writer</p>
-                                </div>
-                            );
-                        }
-                    })}
-                </div>
-                {/* //== */}
-                <div className="title-hd-sm">
-                    <h4>Directors &amp; Credit Writers</h4>
-                </div>
-                <div className="mvcast-item">
-                    {crew.slice(0, 5).map((crew) => {
-                        const splitName = crew.name.split(" ");
-                        return (
-                            <div key={crew.id} className="cast-it">
-                                <div className="cast-left">
-                                    <h4>
-                                        {splitName[0].charAt(0) +
-                                            splitName[1].charAt(0)}
-                                    </h4>
-                                    <a href="#">
-                                        {crew.name || crew.original_name}
-                                    </a>
-                                </div>
-                                <p>... {crew.job}</p>
+                    {directors.slice(0, 5).map((crew) => (
+                        <div key={crew.id} className="cast-it">
+                            <div className="cast-left">
+                                <h4>
+                                    {crew.name.split(" ")[0].charAt(0) +
+                                        crew.name.split(" ")[1].charAt(0)}
+                                </h4>
+                                <a href="#">
+                                    {crew.name || crew.original_name}
+                                </a>
                             </div>
-                        );
-                    })}
+                            <p>... Director</p>
+                        </div>
+                    ))}
+                    {writers.slice(0, 5).map((crew) => (
+                        <div key={crew.id} className="cast-it">
+                            <div className="cast-left">
+                                <h4>
+                                    {crew.name.split(" ")[0].charAt(0) +
+                                        crew.name.split(" ")[1].charAt(0)}
+                                </h4>
+                                <a href="#">
+                                    {crew.name || crew.original_name}
+                                </a>
+                            </div>
+                            <p>... Writer</p>
+                        </div>
+                    ))}
                 </div>
                 {/* //== */}
                 <div className="title-hd-sm">
@@ -92,23 +73,27 @@ export default function TabCast({ name }) {
                                 character,
                                 name,
                                 original_name,
+                                profilePath,
                                 profile_path,
                                 known_for_department,
+                                knownForDepartment,
                             }) => (
                                 <div key={id} className="cast-it">
                                     <div className="cast-left">
                                         <img
-                                            src={
-                                                images.secure_base_url +
-                                                images.profile_sizes[1] +
-                                                profile_path
-                                            }
+                                            src={`${images.secure_base_url}${
+                                                images.profile_sizes[1]
+                                            }${profile_path || profilePath}`}
                                             alt=""
                                         />
                                         <a href="#">{name || original_name}</a>
                                     </div>
                                     <p>
-                                        ... {character || known_for_department}.
+                                        ...{" "}
+                                        {character ||
+                                            known_for_department ||
+                                            knownForDepartment}
+                                        .
                                     </p>
                                 </div>
                             )

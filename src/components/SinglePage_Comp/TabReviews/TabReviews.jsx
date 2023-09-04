@@ -1,9 +1,9 @@
 import { styled } from "styled-components";
 import PropTypes from "prop-types";
 import { images } from "../../../imageConfig";
-import { useSelector } from "react-redux";
 TabReviews.propTypes = {
     name: PropTypes.string,
+    reviews: PropTypes.object,
 };
 Star.propTypes = {
     number: PropTypes.number,
@@ -21,8 +21,7 @@ function Star({ number }) {
         </div>
     );
 }
-export default function TabReviews({ name }) {
-    const { reviews } = useSelector((state) => state.movie);
+export default function TabReviews({ name, reviews }) {
     return (
         <Reviews>
             <div className="row">
@@ -59,21 +58,21 @@ export default function TabReviews({ name }) {
                                 src={
                                     images.secure_base_url +
                                     images.profile_sizes[1] +
-                                    review.author_details.avatar_path
+                                    review.authorDetails.avatar_path
                                 }
                                 alt={
                                     review.author ||
-                                    review.author_details.username
+                                    review.authorDetails.username
                                 }
                             />
                             <div>
                                 <h3>Best Marvel movie in my opinion</h3>
-                                <Star number={review.author_details.rating} />
+                                <Star number={review.authorDetails.rating} />
                                 <p className="time">
                                     {review.created_at} by{" "}
                                     <a href="#">
                                         {review.author ||
-                                            review.author_details.username}
+                                            review.authorDetails.username}
                                     </a>
                                 </p>
                             </div>

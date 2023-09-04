@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { images } from "../imageConfig";
 import { fetchTrendingMovies } from "../features/trendingMoviesSlice";
-import { fetchMoviesPopular } from "../features/moviesPopularSlice";
 import { fetchMovieGenres } from "../features/movieGenresSlice";
-import { fetchTrendingPerson } from "../features/trendingPersonSlice";
-import { fetchTvShowsPopular } from "../features/tvShowsPopularSlice";
 import { fetchMoviesFavorite } from "../features/moviesFavoriteSlice";
+import { fetchMovies } from "../features/moviesSlice";
+import { fetchTvShows } from "../features/tvShowsSlice";
+import { fetchPeople } from "../features/peopleSlice";
 
 export default function HomePage() {
     const { results: trendingMovies, status: trendingMoviesLoading } =
@@ -18,34 +18,37 @@ export default function HomePage() {
     const { genres, status: movieGenresLoading } = useSelector(
         (state) => state.movieGenres
     );
-    const { results: moviesPopular, status: moviesPopularLoading } =
-        useSelector((state) => state.moviesPopular);
-    const { results: tvShowsPopular, status: tvShowsPopularLoading } =
-        useSelector((state) => state.tvShowsPopular);
-    const { results: trendingPerson, status: trendingPersonLoading } =
-        useSelector((state) => state.trendingPerson);
-    const { results: moviesFavorite, status: moviesFavoriteLoading } =
-        useSelector((state) => state.moviesFavorite);
+    const { results: movies, status: moviesLoading } = useSelector(
+        (state) => state.movies
+    );
+    const { results: tvShows, status: tvShowsLoading } = useSelector(
+        (state) => state.tvShows
+    );
+    const { results: person, status: personLoading } = useSelector(
+        (state) => state.people
+    );
+    const { results: moviesFavorite } = useSelector(
+        (state) => state.moviesFavorite
+    );
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchTrendingMovies());
         dispatch(fetchMovieGenres());
-        dispatch(fetchMoviesPopular());
-        dispatch(fetchTvShowsPopular());
-        dispatch(fetchTrendingPerson());
+        dispatch(fetchMovies({}));
+        dispatch(fetchTvShows({}));
+        dispatch(fetchPeople({}));
         dispatch(fetchMoviesFavorite());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     if (
         trendingMoviesLoading === "loading" ||
         movieGenresLoading === "loading" ||
-        moviesPopularLoading === "loading" ||
-        tvShowsPopularLoading === "loading" ||
-        trendingPersonLoading === "loading" ||
-        moviesFavoriteLoading === "loading"
+        moviesLoading === "loading" ||
+        tvShowsLoading === "loading" ||
+        personLoading === "loading"
     ) {
         return <Loading />;
     }
-    console.log(moviesFavorite);
     return (
         <>
             <HeroWrapper
@@ -72,14 +75,14 @@ export default function HomePage() {
                     <div className="row">
                         <div className="col-lg-8">
                             <HomeMovieItems
-                                cateName={"Movie Popular"}
-                                data={moviesPopular.slice(0, 9)}
+                                cateName={"Movies"}
+                                data={movies.slice(0, 9)}
                                 linkViewAll={linkTo.movies}
                                 linkView={linkTo.movie}
                             />
                             <HomeMovieItems
-                                cateName={"TV Popular"}
-                                data={tvShowsPopular.slice(0, 9)}
+                                cateName={"TV Shows"}
+                                data={tvShows.slice(0, 9)}
                                 linkViewAll={linkTo.tvShows}
                                 linkView={linkTo.tvShow}
                             />
@@ -89,8 +92,8 @@ export default function HomePage() {
                             className="col-lg-4 col-md-6 col-sm-8"
                         >
                             <Sidebar
-                                moviesFavorite={moviesFavorite.slice(0, 9)}
-                                person={trendingPerson.slice(0, 9)}
+                                moviesFavorite={moviesFavorite.slice(0, 4)}
+                                person={person.slice(0, 9)}
                             />
                         </div>
                     </div>

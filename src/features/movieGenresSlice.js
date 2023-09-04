@@ -4,7 +4,6 @@ import { getMovieGenresApi } from '../Services/tmdbService';
 export const fetchMovieGenres = createAsyncThunk('genres/fetchMovieGenres',
     async () => {
         const { genres } = await getMovieGenresApi();
-        console.log(genres);
         return { genres }
     })
 

@@ -1,24 +1,16 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getMoviesFilterApi, getMoviesNowPlayingApi } from '../Services/tmdbService';
+import { getMoviesApi } from '../Services/tmdbService';
 
-export const fetchMoviesNowPlaying = createAsyncThunk('movie/fetchMoviesNowPlaying',
-    async (currentPage) => {
-        const {
-            page,
-            results,
-            total_pages: totalPages,
-            total_results: totalResults
-        } = await getMoviesNowPlayingApi(currentPage);
-        return { page, results, totalPages, totalResults }
-    })
-export const fetchMoviesNowPlayingFilter = createAsyncThunk('movies/fetchMoviesNowPlayingFilter',
+export const fetchMovies = createAsyncThunk('movies/fetchMovies',
     async ({
         genres,
         keywords,
         maxStar,
         minStar,
         yearFrom,
-        yearTo, sort
+        yearTo,
+        sort = "popularity.desc",
+        page = 1
     }) => {
         let query = "";
         if (genres) {
@@ -39,11 +31,11 @@ export const fetchMoviesNowPlayingFilter = createAsyncThunk('movies/fetchMoviesN
         if (yearTo) {
             query += "&primary_release_date.lte=" + yearTo
         }
-        const movie = await getMoviesFilterApi(`${query}&sort_by=${sort}`);
+        const movie = await getMoviesApi(`&page=${page}${query}&sort_by=${sort}`);
         return movie
     })
-export const moviesNowPlayingSlice = createSlice({
-    name: 'moviesNowPlaying',
+export const moviesSlice = createSlice({
+    name: 'movies',
     initialState: {
         status: "loading",
         page: 1,
@@ -53,17 +45,19 @@ export const moviesNowPlayingSlice = createSlice({
         filterField: {
             withDateGte: null,
             withDateLte: new Date().getTime(),
-            withKeywords: "",
-            withGenres: "",
+            withKeywords: [],
+            withGenres: [],
             withVoteGte: 1,
             withVoteLte: 10,
         },
         filterStatus: false,
         sort: "popularity.desc",
+        itemsLoading: "loading"
     },
     reducers: {
         setPage: (state, { payload }) => {
             state.page = payload
+            state.itemsLoading = "loading"
         },
         setSort: (state, { payload }) => {
             state.filterStatus = true;
@@ -102,22 +96,28 @@ export const moviesNowPlayingSlice = createSlice({
     },
     extraReducers(builder) {
         builder
-            .addCase(fetchMoviesNowPlaying.pending, (state) => {
-                state.status = 'loading'
+            .addCase(fetchMovies.pending, (state) => {
+                if (state.page === 1 && state.fetchMovies) {
+                    state.status = 'loading'
+                } else {
+                    state.itemsLoading = "loading"
+                }
             })
-            .addCase(fetchMoviesNowPlaying.fulfilled, (state, { payload }) => {
-                return { ...state, ...payload, status: 'succeeded', }
+            .addCase(fetchMovies.fulfilled, (state, { payload }) => {
+
+                state.status = 'succeeded';
+                state.itemsLoading = "succeeded"
+                state.results = payload.results;
+                state.page = payload.page;
+                state.totalPages = payload.total_pages;
+                state.totalResults = payload.total_results;
             })
-            .addCase(fetchMoviesNowPlaying.rejected, (state) => {
-                state.status = 'failed'
-            })
-            .addCase(fetchMoviesNowPlayingFilter.fulfilled, (state, { payload }) => {
-                // Add any fetched posts to the arrays
-                state.results = payload.results
-                state.page = payload.page
-                state.totalPages = payload.total_pages
-                state.totalResults = payload.total_results
-                // state.status = "succeeded"
+            .addCase(fetchMovies.rejected, (state) => {
+                if (state.page === 1 && state.fetchMovies) {
+                    state.status = 'failed';
+                } else {
+                    state.itemsLoading = "failed"
+                }
             })
     }
 
@@ -131,6 +131,6 @@ export const {
     setGenres,
     setMinMaxStar,
     clearSearch
-} = moviesNowPlayingSlice.actions
-const moviesNowPlayingReducer = moviesNowPlayingSlice.reducer
-export default moviesNowPlayingReducer
+} = moviesSlice.actions
+const moviesReducer = moviesSlice.reducer
+export default moviesReducer

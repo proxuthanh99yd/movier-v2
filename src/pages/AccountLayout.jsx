@@ -1,12 +1,29 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { Breadcrumb } from "../components";
 import { linkTo } from "../routes";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutApi } from "../features/accountSlice";
+import { useEffect } from "react";
 
 export default function AccountLayout() {
+    const dispatch = useDispatch();
+    const { isLogin, user } = useSelector((state) => state.account);
+    const navigate = useNavigate();
+    const handleLogout = (e) => {
+        e.preventDefault();
+        const { sessionId } = JSON.parse(localStorage.getItem("auth"));
+        dispatch(logoutApi(sessionId));
+    };
+    useEffect(() => {
+        if (!isLogin) {
+            navigate("/");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLogin]);
     return (
         <>
-            <Breadcrumb title={"EDWARD KENNEDY’S PROFILE"} />
+            <Breadcrumb title={user.username + "’S PROFILE"} />
             <Layout>
                 <div className="container">
                     <div className="row">
@@ -15,7 +32,7 @@ export default function AccountLayout() {
                                 <div className="user-img">
                                     <a href="#">
                                         <img
-                                            src="../images/uploads/user-img.png"
+                                            src="../images/uploads/default-avatar.jpg"
                                             alt=""
                                         />
                                         <br />
@@ -45,16 +62,27 @@ export default function AccountLayout() {
                                                 Rated movies
                                             </NavLink>
                                         </li>
+                                        <li>
+                                            <NavLink
+                                                to={linkTo.tvShowsFavorite}
+                                            >
+                                                Favorite TV Shows
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to={linkTo.tvShowsRated}>
+                                                Rated TV Shows
+                                            </NavLink>
+                                        </li>
                                     </ul>
                                 </div>
                                 <div className="user-fav">
                                     <p>Others</p>
                                     <ul>
                                         <li>
-                                            <a href="#">Change password</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">Log out</a>
+                                            <a onClick={handleLogout} href="#">
+                                                Log out
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
@@ -110,6 +138,10 @@ const Layout = styled.div`
                 border-radius: 5px;
             }
             img {
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 50%;
                 margin-bottom: 30px;
             }
         }

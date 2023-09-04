@@ -1,6 +1,8 @@
+import { useSelector } from "react-redux";
 import { styled } from "styled-components";
 
 export default function Account() {
+    const { user } = useSelector((state) => state.account);
     return (
         <Wrapper>
             <form action="" className="user">
@@ -8,21 +10,21 @@ export default function Account() {
                 <div className="row">
                     <div className="col-md-6 form-it">
                         <label>Username</label>
-                        <input type="text" placeholder="edwardkennedy" />
+                        <input type="text" placeholder={user.username} />
                     </div>
                     <div className="col-md-6 form-it">
                         <label>Email Address</label>
-                        <input type="text" placeholder="edward@kennedy.com" />
+                        <input type="text" placeholder="" />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-6 form-it">
                         <label>First Name</label>
-                        <input type="text" placeholder="Edward " />
+                        <input type="text" placeholder={user.name} />
                     </div>
                     <div className="col-md-6 form-it">
                         <label>Last Name</label>
-                        <input type="text" placeholder="Kennedy" />
+                        <input type="text" placeholder={user.name} />
                     </div>
                 </div>
                 <div className="row">

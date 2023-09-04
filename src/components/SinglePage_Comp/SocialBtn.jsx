@@ -1,30 +1,22 @@
-import { useDispatch, useSelector } from "react-redux";
 import { styled } from "styled-components";
-import { useEffect } from "react";
-import {
-    checkIsFavorite,
-    fetchAddMovieFavorite,
-    fetchRemoveMovieFavorite,
-} from "../../features/moviesFavoriteSlice";
+import PropTypes from "prop-types";
 
-export default function SocialBtn() {
-    const { isFavorite } = useSelector((state) => state.moviesFavorite);
-    const { id } = useSelector((state) => state.movie.movie);
-    const dispatch = useDispatch();
-    const handleAddFavorite = (e) => {
-        e.preventDefault();
-        dispatch(fetchAddMovieFavorite(id));
-    };
-    const handleRemoveFavorite = (e) => {
-        e.preventDefault();
-        dispatch(fetchRemoveMovieFavorite(id));
-    };
-    useEffect(() => {
-        dispatch(checkIsFavorite(id));
-    }, []);
+SocialBtn.propTypes = {
+    movieId: PropTypes.number,
+    accountId: PropTypes.number,
+    favorite: PropTypes.bool,
+    handleAddFavorite: PropTypes.func,
+    handleRemoveFavorite: PropTypes.func,
+};
+
+export default function SocialBtn({
+    favorite,
+    handleAddFavorite,
+    handleRemoveFavorite,
+}) {
     return (
         <Wrapper>
-            {isFavorite ? (
+            {favorite ? (
                 <a
                     href="#"
                     onClick={handleRemoveFavorite}

@@ -2,19 +2,24 @@ import { Link, NavLink } from "react-router-dom";
 import { linkTo } from "../../routes";
 import { HeaderWrapper } from "./style";
 import { useEffect, useState } from "react";
-import Login from "../Login";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAuth } from "../../features/userSlice";
-import { logoutApi } from "../../features/accountSlice";
-import { toast } from "react-toastify";
+import {
+    fetchUser,
+    logoutApi,
+    requestToken,
+} from "../../features/accountSlice";
+import SearchResults from "../SearchResults";
+import { fetchSearch } from "../../features/searchSlice";
+import { clearMoviesFavorite } from "../../features/moviesFavoriteSlice";
 
 export default function Navbar() {
     const [scrollTop, setScrollTop] = useState(false);
     const [menuMobile, setMenuMobile] = useState(false);
-    const [formOpen, setFormOpen] = useState(false);
-    const { status: isLogin } = useSelector((state) => state.account);
+    const { isLogin } = useSelector((state) => state.account);
+    const searchResult = useSelector((state) => state.search);
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(fetchUser());
         const handleScroll = () => {
             if (window.scrollY.toFixed() > 400) {
                 setScrollTop(true);
@@ -27,28 +32,27 @@ export default function Navbar() {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    // useEffect(() => {
-    //     if (isLogin === "succeeded") {
-    //         toast(isLogin);
-    //     }
-    // }, [isLogin]);
     const handleLogin = (e) => {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const newForm = Object.fromEntries(formData);
-        if (!newForm.username || !newForm.password) {
-            return;
-        }
-        dispatch(fetchAuth(newForm));
-        setFormOpen(false);
+        dispatch(requestToken());
     };
     const handleLogout = (e) => {
         e.preventDefault();
         const { sessionId } = JSON.parse(localStorage.getItem("auth"));
         dispatch(logoutApi(sessionId));
+        dispatch(clearMoviesFavorite());
     };
-
+    const handleSearch = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const newForm = Object.fromEntries(formData);
+        if (newForm.query) {
+            dispatch(fetchSearch({ ...newForm, page: 1 }));
+        }
+    };
     return (
         <>
             {/* BEGIN | Header */}
@@ -78,119 +82,64 @@ export default function Navbar() {
                                     <NavLink to={linkTo.home}>Home</NavLink>
                                 </li>
                                 <li className="nav-item dropdown">
-                                    <a href="#">
-                                        Movies
-                                        <i
-                                            className="fa fa-angle-down"
-                                            aria-hidden="true"
-                                        />
-                                    </a>
-                                    <ul className="sub-nav">
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.moviesPopular}>
-                                                Popular
-                                            </Link>
-                                        </li>
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.moviesNowPlaying}>
-                                                Now Playing
-                                            </Link>
-                                        </li>
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.moviesUpcoming}>
-                                                Upcoming
-                                            </Link>
-                                        </li>
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.moviesTopRated}>
-                                                Top Rated
-                                            </Link>
-                                        </li>
-                                    </ul>
+                                    <NavLink to={linkTo.movies}>Movies</NavLink>
                                 </li>
                                 <li className="nav-item dropdown">
                                     <NavLink to={linkTo.tvShows}>
                                         TV Shows
-                                        <i
-                                            className="fa fa-angle-down"
-                                            aria-hidden="true"
-                                        />
                                     </NavLink>
-                                    <ul className="sub-nav">
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.tvPopular}>
-                                                Popular
-                                            </Link>
-                                        </li>
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.tvAiringToday}>
-                                                Airing Today
-                                            </Link>
-                                        </li>
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.tvOnTv}>
-                                                On TV
-                                            </Link>
-                                        </li>
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.tvTopRated}>
-                                                Top Rated
-                                            </Link>
-                                        </li>
-                                    </ul>
                                 </li>
                                 <li className="nav-item dropdown">
                                     <NavLink to={linkTo.people}>
-                                        People
-                                        <i
-                                            className="fa fa-angle-down"
-                                            aria-hidden="true"
-                                        />
+                                        celebrities
                                     </NavLink>
-                                    <ul className="sub-nav">
-                                        <li className="sub-nav-item">
-                                            <Link to={linkTo.peoplePopular}>
-                                                Popular People
-                                            </Link>
-                                        </li>
-                                    </ul>
                                 </li>
                             </ul>
                             <ul className="navbar-nav menu-right">
-                                {isLogin === "succeeded" ? (
+                                {isLogin ? (
                                     <>
                                         <li className="account">
-                                            <Link
+                                            <NavLink
                                                 to={linkTo.account}
                                                 className="user-link"
                                             >
                                                 <i className="fa-solid fa-user"></i>
-                                            </Link>
+                                            </NavLink>
                                             <ul className="account-menu">
                                                 <li className="account-item">
-                                                    <Link
+                                                    <NavLink
                                                         to={
                                                             linkTo.moviesFavorite
                                                         }
                                                     >
-                                                        Favorite
-                                                    </Link>
+                                                        Favorite Movies
+                                                    </NavLink>
                                                 </li>
+
                                                 <li className="account-item">
-                                                    <Link
-                                                        to={
-                                                            linkTo.moviesWatchList
-                                                        }
-                                                    >
-                                                        Watch List
-                                                    </Link>
-                                                </li>
-                                                <li className="account-item">
-                                                    <Link
+                                                    <NavLink
                                                         to={linkTo.moviesRated}
                                                     >
-                                                        Watch List
-                                                    </Link>
+                                                        Rated Movies
+                                                    </NavLink>
+                                                </li>
+
+                                                <li className="account-item">
+                                                    <NavLink
+                                                        to={
+                                                            linkTo.tvShowsFavorite
+                                                        }
+                                                    >
+                                                        Favorite TV Shows
+                                                    </NavLink>
+                                                </li>
+
+                                                <li className="account-item">
+                                                    <NavLink
+                                                        to={linkTo.tvShowsRated}
+                                                    >
+                                                        Rated TV Shows
+                                                    </NavLink>
                                                 </li>
                                                 <li className="account-item">
                                                     <a
@@ -205,21 +154,10 @@ export default function Navbar() {
                                     </>
                                 ) : (
                                     <>
-                                        <li className="loginLink">
-                                            <a
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setFormOpen(
-                                                        (curr) => !curr
-                                                    );
-                                                }}
-                                                href="#"
-                                            >
+                                        <li className="btn sign-upLink">
+                                            <a onClick={handleLogin} href="#">
                                                 LOG In
                                             </a>
-                                        </li>
-                                        <li className="btn sign-upLink">
-                                            <a href="#">sign up</a>
                                         </li>
                                     </>
                                 )}
@@ -239,23 +177,23 @@ export default function Navbar() {
                     </nav>
                     {/* top search form */}
                     {!scrollTop && (
-                        <div className="top-search">
-                            <select>
-                                <option value="united">TV show</option>
-                                <option value="saab">Others</option>
+                        <form onSubmit={handleSearch} className="top-search">
+                            <select name="type">
+                                <option value="movies">Movie</option>
+                                <option value="tvShows">TV show</option>
                             </select>
                             <input
+                                name="query"
                                 type="text"
                                 placeholder="Search for a movie, TV Show or celebrity that you are looking for"
                             />
-                        </div>
+                            <button type="submit">Search</button>
+                        </form>
                     )}
                 </div>
-                {formOpen && (
-                    <Login closeForm={setFormOpen} handleSubmit={handleLogin} />
-                )}
             </HeaderWrapper>
             {/* END | Header */}
+            {searchResult.searchPopup && <SearchResults {...searchResult} />}
         </>
     );
 }

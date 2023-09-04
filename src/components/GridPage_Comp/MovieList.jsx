@@ -7,8 +7,31 @@ MovieList.propTypes = {
     grid: PropTypes.bool,
     movies: PropTypes.array,
     path: PropTypes.string,
+    itemsLoading: PropTypes.string,
 };
-export default function MovieList({ path, grid, movies }) {
+export default function MovieList({
+    itemsLoading = "loading",
+    path,
+    grid,
+    movies,
+}) {
+    if (itemsLoading === "loading") {
+        return (
+            <Wrapper>
+                {Array.from({ length: 20 }, (_, i) => (
+                    <div key={i} className="cards">
+                        <div className="card-loading">
+                            <div className="bars-common bar-one"></div>
+                            <div className="bars-common bar-two"></div>
+                            <div className="bars-common bar-three"></div>
+                            <div className="squares-common square-one"></div>
+                            <div className="squares-common square-two"></div>
+                        </div>
+                    </div>
+                ))}
+            </Wrapper>
+        );
+    }
     return (
         <Wrapper>
             {grid &&
@@ -21,6 +44,7 @@ export default function MovieList({ path, grid, movies }) {
                         title,
                         original_title: originalTitle,
                         vote_average: vote,
+                        rating,
                     }) => (
                         <div
                             key={id}
@@ -56,10 +80,19 @@ export default function MovieList({ path, grid, movies }) {
                                             originalTitle}
                                     </a>
                                 </h6>
-                                <p className="rate">
-                                    <i className="fa-solid fa-star"></i>
-                                    <span>{vote}</span> /10
-                                </p>
+                                {!rating && (
+                                    <p className="rate">
+                                        <i className="fa-solid fa-star"></i>
+                                        <span>{vote.toFixed(0)}</span> /10
+                                    </p>
+                                )}
+                                {rating && (
+                                    <p className="rate">
+                                        <i className="fa-solid fa-star"></i>
+                                        <span>{rating.toFixed(0)}</span> /10
+                                        Your rating
+                                    </p>
+                                )}
                             </div>
                         </div>
                     )
@@ -279,6 +312,213 @@ const Wrapper = styled.div`
             .mv-item-infor {
                 max-width: 180px;
                 margin: 0 auto;
+            }
+        }
+    }
+
+    .cards {
+        margin-right: 23px;
+        margin-bottom: 30px;
+        border-radius: 5px;
+        position: relative;
+        height: 323px;
+        width: 170px;
+        overflow: hidden;
+        background: #0b1a2a;
+        /* background: linear-gradient(135deg, #0d1019 0%, #161b29 100%); */
+        .card-loading {
+            width: 20vw;
+            height: 20vw;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            margin: auto;
+            overflow: hidden;
+            .bars-common {
+                height: 4vw;
+                max-height: 100%;
+                width: 1vw;
+                margin: auto;
+                position: absolute;
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+            }
+
+            .bar-one {
+                left: 0;
+                right: 4vw;
+                top: 0;
+                bottom: 0;
+                box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                    inset 0 0 0.5vw 0 cyan;
+            }
+
+            .bar-two {
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                    inset 0 0 0.5vw 0 cyan;
+            }
+
+            .bar-three {
+                left: 4vw;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                    inset 0 0 0.5vw 0 cyan;
+            }
+
+            /* Rotating squares style */
+
+            .squares-common {
+                height: 8vw;
+                max-height: 100%;
+                width: 8vw;
+                margin: auto;
+                position: absolute;
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                border-radius: 0%;
+            }
+
+            .square-one {
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                    inset 0 0 0.5vw 0 cyan;
+            }
+
+            .square-two {
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                    inset 0 0 0.5vw 0 cyan;
+            }
+
+            /* Animation */
+            /* Compressing bars animation */
+
+            .bar-one {
+                animation: barOne 1s 0.33s ease infinite;
+                -moz-animation: barOne 1s 0.33s ease infinite;
+                /* Firefox */
+                -webkit-animation: barOne 1s 0.33s ease infinite;
+                /* Safari and Chrome */
+                -o-animation: barOne 1s 0.33s ease infinite;
+                /* Opera */
+            }
+
+            @keyframes barOne {
+                0%,
+                100% {
+                    box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                        inset 0 0 0.5vw 0 cyan;
+                }
+                50% {
+                    height: 2.5vw;
+                    box-shadow: 0 0 0 0.1vw magenta, 0 0 1vw 0 magenta,
+                        inset 0 0 0.5vw 0 magenta;
+                }
+            }
+
+            .bar-two {
+                animation: barTwo 1s 0.66s ease infinite;
+                -moz-animation: barTwo 1s 0.66s ease infinite;
+                /* Firefox */
+                -webkit-animation: barTwo 1s 0.66s ease infinite;
+                /* Safari and Chrome */
+                -o-animation: barTwo 1s 0.66s ease infinite;
+                /* Opera */
+            }
+
+            @keyframes barTwo {
+                0%,
+                100% {
+                    box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                        inset 0 0 0.5vw 0 cyan;
+                }
+                50% {
+                    height: 2.5vw;
+                    box-shadow: 0 0 0 0.1vw magenta, 0 0 1vw 0 magenta,
+                        inset 0 0 0.5vw 0 magenta;
+                }
+            }
+
+            .bar-three {
+                animation: barThree 1s 0.99s ease infinite;
+                -moz-animation: barThree 1s 0.99s ease infinite;
+                /* Firefox */
+                -webkit-animation: barThree 1s 0.99s ease infinite;
+                /* Safari and Chrome */
+                -o-animation: barThree 1s 0.99s ease infinite;
+                /* Opera */
+            }
+
+            @keyframes barThree {
+                0%,
+                100% {
+                    box-shadow: 0 0 0 0.1vw cyan, 0 0 1vw 0 cyan,
+                        inset 0 0 0.5vw 0 cyan;
+                }
+                50% {
+                    height: 2.5vw;
+                    box-shadow: 0 0 0 0.1vw magenta, 0 0 1vw 0 magenta,
+                        inset 0 0 0.5vw 0 magenta;
+                }
+            }
+
+            /* Rotating squares animation */
+
+            .square-one {
+                animation: squareOne 4s 0.99s ease infinite;
+                -moz-animation: squareOne 4s 0.99s ease infinite;
+                /* Firefox */
+                -webkit-animation: squareOne 4s 0.99s ease infinite;
+                /* Safari and Chrome */
+                -o-animation: squareOne 4s 0.99s ease infinite;
+                /* Opera */
+            }
+
+            @keyframes squareOne {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(-180deg);
+                }
+            }
+
+            .square-two {
+                animation: squareTwo 4s 0.99s ease infinite;
+                -moz-animation: squareTwo 4s 0.99s ease infinite;
+                /* Firefox */
+                -webkit-animation: squareTwo 4s 0.99s ease infinite;
+                /* Safari and Chrome */
+                -o-animation: squareTwo 4s 0.99s ease infinite;
+                /* Opera */
+            }
+
+            @keyframes squareTwo {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(180deg);
+                }
             }
         }
     }

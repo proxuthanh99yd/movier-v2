@@ -1,82 +1,136 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { tvAiringTodayApi, tvOnTheAirApi, tvPopularApi, tvTopRatedApi } from '../Services/tvShowsService';
+import { getTvShowsApi } from '../Services/tmdbService';
 
-export const fetchTvPopular = createAsyncThunk('tvShow/fetchTvPopular',
-    async () => {
-        const tvShows = await tvPopularApi();
-        return { tvShows }
-    })
-export const fetchAiringToday = createAsyncThunk('tvShow/fetchAiringToday',
-    async () => {
-        const tvShows = await tvAiringTodayApi();
-        return { tvShows }
-    })
-export const fetchOnTheAir = createAsyncThunk('tvShow/fetchOnTheAir',
-    async () => {
-        const tvShows = await tvOnTheAirApi();
-        return { tvShows }
-    })
-export const fetchTopRated = createAsyncThunk('tvShow/fetchTopRated',
-    async () => {
-        const tvShows = await tvTopRatedApi();
-        return { tvShows }
+export const fetchTvShows = createAsyncThunk('tv/fetchTvShows',
+    async ({
+        genres,
+        keywords,
+        maxStar,
+        minStar,
+        yearFrom,
+        yearTo,
+        sort = "popularity.desc",
+        page = 1
+    }) => {
+        let query = "";
+        if (genres) {
+            query += "&with_genres=" + genres
+        }
+        if (keywords) {
+            query += "&with_keywords=" + keywords
+        }
+        if (minStar) {
+            query += "&vote_average.gte=" + minStar
+        }
+        if (maxStar) {
+            query += "&vote_average.lte=" + maxStar
+        }
+        if (yearFrom) {
+            query += "&primary_release_date.gte=" + yearFrom
+        }
+        if (yearTo) {
+            query += "&primary_release_date.lte=" + yearTo
+        }
+        const movie = await getTvShowsApi(`&page=${page}${query}&sort_by=${sort}`);
+        return movie
     })
 
-
-export const TvShowsSlice = createSlice({
-    name: 'TvShowsSlice',
+export const tvShowsSlice = createSlice({
+    name: 'tvShows',
     initialState: {
         status: "loading",
-        tvShows: [],
+        page: 1,
+        results: [],
+        totalPages: 0,
+        totalResults: 0,
+        filterField: {
+            withDateGte: null,
+            withDateLte: new Date().getTime(),
+            withKeywords: [],
+            withGenres: [],
+            withVoteGte: 1,
+            withVoteLte: 10,
+        },
+        filterStatus: false,
+        sort: "popularity.desc",
+        itemsLoading: "loading"
     },
     reducers: {
+        setPage: (state, { payload }) => {
+            state.page = payload
+            state.itemsLoading = "loading"
+        },
+        setSort: (state, { payload }) => {
+            state.filterStatus = true;
+            state.sort = payload
+        },
+        setDateFrom: (state, { payload }) => {
+            state.filterStatus = true;
+            state.filterField.withDateGte = payload
+        },
+        setDateTo: (state, { payload }) => {
+            state.filterStatus = true;
+            state.filterField.withDateLte = payload
+        },
+        setKeywords: (state, { payload }) => {
+            state.filterStatus = true;
+            state.filterField.withKeywords = payload
+        },
+        setGenres: (state, { payload }) => {
+            state.filterStatus = true;
+            state.filterField.withGenres = payload
+        },
+        setMinMaxStar: (state, { payload }) => {
+            state.filterStatus = true;
+            state.filterField.withVoteGte = payload.min
+            state.filterField.withVoteLte = payload.max
+        },
+        clearSearch: (state) => {
+            state.filterStatus = false;
+            state.filterField.withDateGte = null
+            state.filterField.withDateLte = new Date().getTime()
+            state.filterField.withKeywords = ''
+            state.filterField.withGenres = ''
+            state.filterField.withVoteGte = 1
+            state.filterField.withVoteLte = 10
+        }
     },
     extraReducers(builder) {
         builder
-            .addCase(fetchTvPopular.pending, (state) => {
-                state.status = 'loading'
+            .addCase(fetchTvShows.pending, (state) => {
+                if (state.page === 1 && state.fetchMovies) {
+                    state.status = 'loading'
+                } else {
+                    state.itemsLoading = "loading"
+                }
             })
-            .addCase(fetchTvPopular.fulfilled, (state, { payload }) => {
-                // Add any fetched posts to the arrays
-                return { ...state, ...payload, status: 'succeeded', }
+            .addCase(fetchTvShows.fulfilled, (state, { payload }) => {
+                state.status = 'succeeded';
+                state.itemsLoading = "succeeded"
+                state.results = payload.results;
+                state.page = payload.page;
+                state.totalPages = payload.total_pages;
+                state.totalResults = payload.total_results;
             })
-            .addCase(fetchTvPopular.rejected, (state) => {
-                state.status = 'failed'
-            })
-            .addCase(fetchAiringToday.pending, (state) => {
-                state.status = 'loading'
-            })
-            .addCase(fetchAiringToday.fulfilled, (state, { payload }) => {
-                // Add any fetched posts to the arrays
-                return { ...state, ...payload, status: 'succeeded', }
-            })
-            .addCase(fetchAiringToday.rejected, (state) => {
-                state.status = 'failed'
-            })
-            .addCase(fetchOnTheAir.pending, (state) => {
-                state.status = 'loading'
-            })
-            .addCase(fetchOnTheAir.fulfilled, (state, { payload }) => {
-                // Add any fetched posts to the arrays
-                return { ...state, ...payload, status: 'succeeded', }
-            })
-            .addCase(fetchOnTheAir.rejected, (state) => {
-                state.status = 'failed'
-            })
-            .addCase(fetchTopRated.pending, (state) => {
-                state.status = 'loading'
-            })
-            .addCase(fetchTopRated.fulfilled, (state, { payload }) => {
-                // Add any fetched posts to the arrays
-                return { ...state, ...payload, status: 'succeeded', }
-            })
-            .addCase(fetchTopRated.rejected, (state) => {
-                state.status = 'failed'
+            .addCase(fetchTvShows.rejected, (state) => {
+                if (state.page === 1 && state.fetchMovies) {
+                    state.status = 'failed';
+                } else {
+                    state.itemsLoading = "failed"
+                }
             })
     }
 
 })
-
-// export const { } = homeSlice.actions
-
-export default TvShowsSlice.reducer
+export const {
+    setSort,
+    setPage,
+    setDateFrom,
+    setDateTo,
+    setKeywords,
+    setGenres,
+    setMinMaxStar,
+    clearSearch
+} = tvShowsSlice.actions
+const tvShowsReducer = tvShowsSlice.reducer
+export default tvShowsReducer

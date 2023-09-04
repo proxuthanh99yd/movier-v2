@@ -6,20 +6,52 @@ import MovieInfo from "./MovieInfo";
 import PropTypes from "prop-types";
 
 TabOverview.propTypes = {
-    movie: PropTypes.object,
+    overview: PropTypes.string,
+    crew: PropTypes.array,
+    cast: PropTypes.array,
+    keywords: PropTypes.array,
+    genres: PropTypes.array,
+    releaseDate: PropTypes.string,
+    runTime: PropTypes.number,
+    vote: PropTypes.number,
+    firstAirDate: PropTypes.string,
+    lastAirDate: PropTypes.string,
 };
-export default function TabOverview({ movie }) {
+export default function TabOverview({
+    overview,
+    crew,
+    cast,
+    keywords,
+    genres,
+    releaseDate,
+    runTime,
+    vote,
+    firstAirDate,
+    lastAirDate,
+    reviews,
+    images,
+}) {
     return (
         <Wrapper>
             <div className="row">
                 <div className="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                    <p>{movie.overview}</p>
-                    <VideoPhoto />
-                    <MovieCast />
-                    <UserReviews />
+                    <p>{overview}</p>
+                    <VideoPhoto images={images} />
+                    <MovieCast cast={cast} />
+                    <UserReviews reviews={reviews} />
                 </div>
                 <div className="col-lg-4 col-md-12 col-xs-12 col-sm-12">
-                    <MovieInfo movie={movie} />
+                    <MovieInfo
+                        crew={crew}
+                        cast={cast}
+                        keywords={keywords}
+                        genres={genres}
+                        releaseDate={releaseDate}
+                        firstAirDate={firstAirDate}
+                        lastAirDate={lastAirDate}
+                        runTime={runTime}
+                        vote={vote}
+                    />
                     {/* <div className="ads">
                         <img src="/images/uploads/ads1.png" alt="ads" />
                     </div> */}

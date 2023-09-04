@@ -27,7 +27,16 @@ const auth = axios.create({
         Authorization: import.meta.env.VITE_HEADER_AUTH
     },
 })
+const post = axios.create({
+    baseURL: import.meta.env.VITE_BASE_URL,
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        accept: 'application/json',
+        Authorization: import.meta.env.VITE_HEADER_AUTH
+    },
+})
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.defaults.headers.common['Authorization'] = import.meta.env.VITE_HEADER_AUTH;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-export { api, auth };
+export { api, auth, post };

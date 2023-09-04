@@ -10,8 +10,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PagePaginate from "./PagePaginate";
 import {
-    fetchMoviesUpcoming,
-    fetchMoviesUpcomingFilter,
     setPage,
     clearSearch,
     setDateFrom,
@@ -20,24 +18,25 @@ import {
     setKeywords,
     setMinMaxStar,
     setSort,
-} from "../features/moviesUpcomingSlice";
+    fetchMovies,
+} from "../features/moviesSlice";
 import { dateFormat } from "../helper";
 import { fetchMovieGenres } from "../features/movieGenresSlice";
 import { get } from "../Services/initialService";
 
-export default function MoviesUpcomingPage() {
+export default function MoviesPage() {
     const [grid, setGrid] = useState(true);
     const dispatch = useDispatch();
     const {
-        results: moviesUpcoming,
+        results: movies,
         status,
         totalResults,
         totalPages,
         page,
         filterField,
         sort,
-        filterStatus,
-    } = useSelector((state) => state.moviesUpcoming);
+        itemsLoading,
+    } = useSelector((state) => state.movies);
     const { genres } = useSelector((state) => state.movieGenres);
 
     const {
@@ -50,26 +49,23 @@ export default function MoviesUpcomingPage() {
     } = filterField;
 
     useEffect(() => {
-        if (filterStatus) {
-            const filter = {
-                keywords:
-                    withKeywords.length > 0
-                        ? withKeywords.map((select) => select.value).join()
-                        : "",
-                genres:
-                    withGenres.length > 0
-                        ? withGenres.map((select) => select.value).join()
-                        : "",
-                yearFrom: withDateGte ? dateFormat(new Date(withDateGte)) : "",
-                yearTo: dateFormat(new Date(withDateLte)),
-                minStar: withVoteGte,
-                maxStar: withVoteLte,
-            };
-            dispatch(fetchMoviesUpcomingFilter({ ...filter, sort }));
-        } else {
-            dispatch(fetchMoviesUpcoming(page));
-        }
+        const filter = {
+            keywords:
+                withKeywords.length > 0
+                    ? withKeywords.map((select) => select.value).join()
+                    : "",
+            genres:
+                withGenres.length > 0
+                    ? withGenres.map((select) => select.value).join()
+                    : "",
+            yearFrom: withDateGte ? dateFormat(new Date(withDateGte)) : "",
+            yearTo: dateFormat(new Date(withDateLte)),
+            minStar: withVoteGte,
+            maxStar: withVoteLte,
+        };
+        dispatch(fetchMovies({ ...filter, sort, page }));
         dispatch(fetchMovieGenres());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, sort]);
 
     const handleDateFrom = (date) => {
@@ -120,11 +116,11 @@ export default function MoviesUpcomingPage() {
             minStar: withVoteGte,
             maxStar: withVoteLte,
         };
-        dispatch(fetchMoviesUpcomingFilter({ ...filter, sort }));
+        dispatch(fetchMovies({ ...filter, sort }));
     };
     const handleClearSearch = () => {
         dispatch(clearSearch());
-        dispatch(fetchMoviesUpcoming(page));
+        dispatch(fetchMovies(page));
     };
     const options = genres.map((genre) => ({
         value: genre.id,
@@ -141,10 +137,7 @@ export default function MoviesUpcomingPage() {
     }
     return (
         <>
-            <Breadcrumb
-                title="Movies Upcoming"
-                image={moviesUpcoming[0]?.backdrop_path}
-            />
+            <Breadcrumb title="Movies" image={movies[0]?.backdrop_path} />
             <Wrapper>
                 <div className="container">
                     <div className="row ipad-width">
@@ -156,11 +149,12 @@ export default function MoviesUpcomingPage() {
                                 grid={grid}
                                 setGrid={setGrid}
                             />
-                            {moviesUpcoming.length > 0 ? (
+                            {movies.length > 0 ? (
                                 <MovieList
+                                    itemsLoading={itemsLoading}
                                     path={"movies"}
                                     grid={grid}
-                                    movies={moviesUpcoming}
+                                    movies={movies}
                                 />
                             ) : (
                                 <p style={{ color: "#fff" }}>no results</p>

@@ -1,5 +1,12 @@
 import ReactPaginate from "react-paginate";
 import { styled } from "styled-components";
+import PropTypes from "prop-types";
+
+PagePaginate.propTypes = {
+    handlePageClick: PropTypes.func,
+    page: PropTypes.number,
+    totalPages: PropTypes.number,
+};
 
 export default function PagePaginate({ handlePageClick, page, totalPages }) {
     return (
@@ -7,11 +14,13 @@ export default function PagePaginate({ handlePageClick, page, totalPages }) {
             <ReactPaginate
                 forcePage={page - 1}
                 breakLabel="..."
-                nextLabel="next >"
+                nextLabel={<i className="fa-solid fa-circle-chevron-right"></i>}
                 onPageChange={handlePageClick}
                 pageRangeDisplayed={5}
                 pageCount={totalPages > 500 ? 500 : totalPages}
-                previousLabel="< previous"
+                previousLabel={
+                    <i className="fa-solid fa-circle-chevron-left"></i>
+                }
                 renderOnZeroPageCount={null}
             />
         </Wrapper>
@@ -20,6 +29,7 @@ export default function PagePaginate({ handlePageClick, page, totalPages }) {
 
 const Wrapper = styled.div`
     ul {
+        padding: 10px;
         display: flex;
         align-items: center;
         justify-content: center;

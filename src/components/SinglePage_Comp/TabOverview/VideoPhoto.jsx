@@ -1,11 +1,10 @@
-import { useSelector } from "react-redux";
 import { styled } from "styled-components";
 import { images as imageConfig } from "../../../imageConfig";
-export default function VideoPhoto() {
-    const { images, imageLoading } = useSelector((state) => state.movie);
-    if (imageLoading === "loading") {
-        return <p>loading...</p>;
-    }
+import PropTypes from "prop-types";
+
+VideoPhoto.propTypes = { images: PropTypes.array };
+
+export default function VideoPhoto({ images }) {
     return (
         <>
             <div className="title-hd-sm">

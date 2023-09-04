@@ -1,25 +1,37 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { movieSingleApi, movieSinglePhotoApi } from '../Services/movieSingleService';
-import { tvShowSingleApi, tvShowSinglePhotoApi } from '../Services/tvShowSingleService';
+import { addMovieFavoriteApi, addMovieRatedApi, getAccountStatesApi, movieSingleApi, movieSinglePhotoApi, removeMovieFavoriteApi } from '../Services/tmdbService';
 
-
-export const fetchTVShowSingle = createAsyncThunk('tvShow/fetchTVShowSingle',
-    async (id) => {
-        const tvShow = await tvShowSingleApi(id);
-        return tvShow;
+export const addMovieFavorite = createAsyncThunk('movie/addMovieFavorite',
+    async ({ accountId, movieId }) => {
+        const auth = JSON.parse(localStorage.getItem('auth'))
+        const data = await addMovieFavoriteApi({ accountId, movieId, sessionId: auth.sessionId });
+        return data
     })
-
-export const fetchTVShowSingleImage = createAsyncThunk('tvShow/fetchTVShowSingleImage',
-    async (id) => {
-        const images = await tvShowSinglePhotoApi(id);
-        return images;
+export const removeMovieFavorite = createAsyncThunk('movie/removeMovieFavorite',
+    async ({ accountId, movieId }) => {
+        const auth = JSON.parse(localStorage.getItem('auth'))
+        const data = await removeMovieFavoriteApi({ accountId, movieId, sessionId: auth.sessionId });
+        return data
     })
-
-
+export const addMovieRated = createAsyncThunk('movie/addMovieRated',
+    async ({ movieId, value }) => {
+        const auth = JSON.parse(localStorage.getItem('auth'))
+        const data = await addMovieRatedApi({ value, movieId, sessionId: auth.sessionId });
+        if (data) {
+            return { value }
+        }
+    })
 export const fetchMovieSingle = createAsyncThunk('movie/fetchMovieSingle',
     async (id) => {
+        const auth = JSON.parse(localStorage.getItem("auth"));
+        if (!auth) {
+            const movie = await movieSingleApi(id);
+            return movie;
+        }
         const movie = await movieSingleApi(id);
-        return movie;
+        const { favorite, rated, watchlist } = await getAccountStatesApi(id, auth.sessionId);
+        const newMovie = { ...movie, watchlist, favorite, rated }
+        return newMovie;
     })
 export const fetchMovieSingleImage = createAsyncThunk('movie/fetchMovieSingleImage',
     async (id) => {
@@ -29,20 +41,41 @@ export const fetchMovieSingleImage = createAsyncThunk('movie/fetchMovieSingleIma
 
 
 export const movieSingleSlice = createSlice({
-    name: 'singlePageSlice',
+    name: 'movieSingleSlice',
     initialState: {
-        movie: {},
+        movie: {
+            adult: false,
+            belongsToCollection: {},
+            budget: 0,
+            homePage: "",
+            id: 0,
+            overview: "",
+            backdropPath: "",
+            posterPath: "",
+            name: "",
+            releaseDate: "",
+            revenue: 0,
+            runTime: 0,
+            vote: 0,
+            rated: false,
+            favorite: false,
+        },
         status: "loading",
         images: [],
         imageLoading: "loading",
         crew: [],
         cast: [],
-        reviews: [],
+        reviews: {
+            page: 1,
+            results: [],
+            totalPages: 0,
+            totalResults: 0
+        },
         videos: [],
-        keywords: []
+        keywords: [],
+        genres: []
     },
     reducers: {
-
     },
     extraReducers(builder) {
         builder
@@ -52,11 +85,66 @@ export const movieSingleSlice = createSlice({
             .addCase(fetchMovieSingle.fulfilled, (state, { payload }) => {
                 // Add any fetched posts to the arrays
                 state.status = 'succeeded'
-                state.movie = payload
-                state.cast = payload.credits.cast
-                state.crew = payload.credits.crew
-                state.videos = payload.videos.results
-                state.reviews = payload.reviews
+                state.movie.adult = payload.adult
+                state.movie.backdropPath = payload.backdrop_path
+                state.movie.belongsToCollection = payload.belongs_to_collection
+                state.movie.budget = payload.budget
+                state.movie.homePage = payload.homepage
+                state.movie.id = payload.id
+                state.movie.overview = payload.overview
+                state.movie.posterPath = payload.poster_path
+                state.movie.name = payload.title || payload.original_title
+                state.movie.releaseDate = payload.release_date
+                state.movie.revenue = payload.revenue
+                state.movie.runTime = payload.runtime
+                state.movie.vote = payload.vote_average
+                state.movie.rated = payload.rated
+                state.movie.favorite = payload.favorite
+
+                state.cast = payload.credits?.cast.map(item => ({
+                    adult: item.adult,
+                    castId: item.cast_id,
+                    character: item.character,
+                    id: item.id,
+                    knownForDepartment: item.known_for_department,
+                    name: item.name || item.original_name,
+                    profilePath: item.profile_path
+                }))
+
+                state.crew = payload.credits?.crew.map(item => ({
+                    adult: item.adult,
+                    id: item.id,
+                    knownForDepartment: item.known_for_department,
+                    name: item.name || item.original_name,
+                    profilePath: item.profile_path,
+                    department: item.department,
+                    job: item.job,
+                }))
+
+                state.videos = payload.videos.results.map(item => ({
+                    name: item.name,
+                    key: item.key,
+                    site: item.site,
+                    size: item.size,
+                    type: item.type,
+                    official: item.official,
+                    published_at: item.publishedAt,
+                    id: item.id,
+                }))
+
+                state.reviews.page = payload.reviews?.page
+                state.reviews.totalPages = payload.reviews?.total_pages
+                state.reviews.totalResults = payload.reviews?.total_results
+                state.reviews.results = payload.reviews?.results.map(item => ({
+                    id: item.id,
+                    author: item.author,
+                    authorDetails: item.author_details,
+                    content: item.content,
+                    createdAt: item.created_at,
+                    updatedAt: item.updated_at,
+                    url: item.url
+                }))
+                state.genres = payload.genres
                 state.keywords = payload.keywords.keywords
             })
             .addCase(fetchMovieSingle.rejected, (state) => {
@@ -73,37 +161,20 @@ export const movieSingleSlice = createSlice({
             .addCase(fetchMovieSingleImage.rejected, (state) => {
                 state.imageLoading = 'failed'
             })
-            .addCase(fetchTVShowSingle.pending, (state) => {
-                state.status = 'loading'
+            .addCase(addMovieFavorite.fulfilled, (state) => {
+                state.movie.favorite = true
             })
-            .addCase(fetchTVShowSingle.fulfilled, (state, { payload }) => {
-                // Add any fetched posts to the arrays
-                state.status = 'succeeded'
-                state.movie = payload
-                state.cast = payload.aggregate_credits.cast
-                state.crew = payload.aggregate_credits.crew
-                state.videos = payload.videos.results
-                state.reviews = payload.reviews
-                state.keywords = payload.keywords.results
+            .addCase(removeMovieFavorite.fulfilled, (state) => {
+                state.movie.favorite = false
             })
-            .addCase(fetchTVShowSingle.rejected, (state) => {
-                state.status = 'failed'
+            .addCase(addMovieRated.fulfilled, (state, { payload }) => {
+                state.movie.rated = payload
             })
-            .addCase(fetchTVShowSingleImage.pending, (state) => {
-                state.imageLoading = 'loading'
-            })
-            .addCase(fetchTVShowSingleImage.fulfilled, (state, { payload }) => {
-                // Add any fetched posts to the arrays
-                state.imageLoading = 'succeeded'
-                state.images = payload
-            })
-            .addCase(fetchTVShowSingleImage.rejected, (state) => {
-                state.imageLoading = 'failed'
-            })
+
     }
 
 })
 
-// export const { } = movieSingleSlice.actions
+export const { setFavorite } = movieSingleSlice.actions
 
 export default movieSingleSlice.reducer

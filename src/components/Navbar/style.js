@@ -112,6 +112,9 @@ export const HeaderWrapper = styled.header`
                             cursor: pointer;
                             font-size: 24px;
                             color: #fff;
+                            &.active {
+                                color: #dcf836;
+                            }
                         }
                         &:hover .account-menu {
                             opacity: 1;
@@ -122,18 +125,36 @@ export const HeaderWrapper = styled.header`
                             visibility: hidden;
                             border-radius: 5px;
                             position: absolute;
-                            right: 0;
+                            left: 100%;
+                            transform: translateX(-100%);
                             background: #fff;
-                            width: 100px;
+                            width: 200px;
                             transition: 0.3s ease;
                             .account-item {
                                 a {
                                     display: block;
                                     padding: 10px;
+                                    font-family: "Dosis", sans-serif;
+                                    font-size: 14px;
+                                    color: #abb7c4;
+                                    font-weight: bold;
+                                    text-transform: uppercase;
+                                    cursor: pointer;
+                                    transition: 0.3s ease;
                                     &:hover {
                                         opacity: 0.8;
                                         background: #ccc;
+                                        color: #dcf836;
                                     }
+                                    &.active {
+                                        color: #dcf836;
+                                    }
+                                }
+                                &:first-child a {
+                                    border-radius: 5px 5px 0 0;
+                                }
+                                &:last-child a {
+                                    border-radius: 0 0 5px 5px;
                                 }
                             }
                         }
@@ -203,9 +224,17 @@ export const HeaderWrapper = styled.header`
         input {
             padding-left: 10px;
             flex-basis: 81%;
-            background: url(../images/uploads/topsearch.png) no-repeat right
-                20px center;
+            background: no-repeat right 20px center;
             outline: transparent;
+        }
+        button {
+            cursor: pointer;
+            height: 46px;
+            font-family: "Nunito", sans-serif;
+            font-size: 18px;
+            color: #fff;
+            background-color: transparent;
+            /* border: transparent; */
         }
     }
 

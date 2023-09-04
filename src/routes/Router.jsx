@@ -5,45 +5,19 @@ import {
     ErrorPage,
     HomePage,
     MovieSinglePage,
-    Movies,
-    MoviesFavorite,
-    MoviesNowPlayingPage,
-    MoviesPopularPage,
-    MoviesRated,
-    MoviesTopRatedPage,
-    MoviesUpcomingPage,
-    MoviesWatchList,
+    MoviesFavoritePage,
+    MoviesPage,
+    MoviesRatedPage,
     PeoplePage,
+    PersonPage,
     RootLayout,
     TVShowSinglePage,
+    TVShowsFavoritePage,
     TVShowsPage,
+    TVShowsRatedPage,
 } from "../pages";
 import { linkTo } from "./linkTo";
 import Approved from "../pages/Approved";
-import {
-    fetchMoviesPopular,
-    fetchMoviesPopularFilter,
-    setPage as setPageMoviesPopular,
-    clearSearch as clearSearchMoviesPopular,
-    setDateFrom as setDateFromMoviesPopular,
-    setDateTo as setDateToMoviesPopular,
-    setGenres as setGenresMoviesPopular,
-    setKeywords as setKeywordsMoviesPopular,
-    setMinMaxStar as setMinMaxStarMoviesPopular,
-    setSort as setSortMoviesPopular,
-} from "../features/moviesPopularSlice";
-import {
-    fetchMoviesNowPlaying,
-    fetchMoviesNowPlayingFilter,
-    setPage as setPageMoviesNowPlaying,
-    clearSearch as clearSearchMoviesNowPlaying,
-    setDateFrom as setDateFromMoviesNowPlaying,
-    setDateTo as setDateToMoviesNowPlaying,
-    setGenres as setGenresMoviesNowPlaying,
-    setKeywords as setKeywordsMoviesNowPlaying,
-    setMinMaxStar as setMinMaxStarMoviesNowPlaying,
-    setSort as setSortMoviesNowPlaying,
-} from "../features/moviesNowPlayingSlice";
 
 export const router = createBrowserRouter([
     {
@@ -64,50 +38,8 @@ export const router = createBrowserRouter([
                 element: <MovieSinglePage />,
             },
             {
-                path: linkTo.moviesPopular,
-                element: <MoviesPopularPage />,
-                // element: (
-                //     <Movies
-                //         moviesState={(state) => state.moviesPopular}
-                //         moviesFilter={fetchMoviesPopularFilter}
-                //         movies={fetchMoviesPopular}
-                //         setPage={setPageMoviesPopular}
-                //         clearSearch={clearSearchMoviesPopular}
-                //         setDateFrom={setDateFromMoviesPopular}
-                //         setDateTo={setDateToMoviesPopular}
-                //         setGenres={setGenresMoviesPopular}
-                //         setKeywords={setKeywordsMoviesPopular}
-                //         setMinMaxStar={setMinMaxStarMoviesPopular}
-                //         setSort={setSortMoviesPopular}
-                //     />
-                // ),
-            },
-            {
-                path: linkTo.moviesNowPlaying,
-                element: <MoviesNowPlayingPage />,
-                // element: (
-                //     <Movies
-                //         moviesState={(state) => state.moviesNowPlaying}
-                //         moviesFilter={fetchMoviesNowPlayingFilter}
-                //         movies={fetchMoviesNowPlaying}
-                //         setPage={setPageMoviesNowPlaying}
-                //         clearSearch={clearSearchMoviesNowPlaying}
-                //         setDateFrom={setDateFromMoviesNowPlaying}
-                //         setDateTo={setDateToMoviesNowPlaying}
-                //         setGenres={setGenresMoviesNowPlaying}
-                //         setKeywords={setKeywordsMoviesNowPlaying}
-                //         setMinMaxStar={setMinMaxStarMoviesNowPlaying}
-                //         setSort={setSortMoviesNowPlaying}
-                //     />
-                // ),
-            },
-            {
-                path: linkTo.moviesUpcoming,
-                element: <MoviesUpcomingPage />,
-            },
-            {
-                path: linkTo.moviesTopRated,
-                element: <MoviesTopRatedPage />,
+                path: linkTo.movies,
+                element: <MoviesPage />,
             },
             {
                 path: linkTo.tvShows,
@@ -138,8 +70,8 @@ export const router = createBrowserRouter([
                 element: <PeoplePage />,
             },
             {
-                path: linkTo.peoplePopular,
-                element: <PeoplePage />,
+                path: `${linkTo.person}:id`,
+                element: <PersonPage />,
             },
             {
                 path: linkTo.account,
@@ -151,15 +83,19 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: linkTo.moviesFavorite,
-                        element: <MoviesFavorite />,
+                        element: <MoviesFavoritePage />,
                     },
                     {
                         path: linkTo.moviesRated,
-                        element: <MoviesRated />,
+                        element: <MoviesRatedPage />,
                     },
                     {
-                        path: linkTo.moviesWatchList,
-                        element: <MoviesWatchList />,
+                        path: linkTo.tvShowsFavorite,
+                        element: <TVShowsFavoritePage />,
+                    },
+                    {
+                        path: linkTo.tvShowsRated,
+                        element: <TVShowsRatedPage />,
                     },
                 ],
             },

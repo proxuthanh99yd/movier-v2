@@ -1,68 +1,71 @@
 import { styled } from "styled-components";
-
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 
 MovieInfo.propTypes = {
-    movie: PropTypes.object,
+    crew: PropTypes.array,
+    cast: PropTypes.array,
+    keywords: PropTypes.array,
+    genres: PropTypes.array,
+    releaseDate: PropTypes.string,
+    runTime: PropTypes.number,
+    vote: PropTypes.number,
+    firstAirDate: PropTypes.string,
+    lastAirDate: PropTypes.string,
 };
 
-export default function MovieInfo({ movie }) {
-    const { crew, cast, keywords } = useSelector((state) => state.movie);
+export default function MovieInfo({
+    crew,
+    cast,
+    keywords,
+    genres,
+    releaseDate,
+    runTime,
+    vote,
+    firstAirDate,
+    lastAirDate,
+}) {
+    const directors = crew.filter((director) => {
+        if (director?.jobs && director?.jobs[0].job === "Director") {
+            return { ...director };
+        } else if (director?.job === "Director") {
+            return { ...director };
+        }
+    });
+    const writers = crew.filter((writer) => {
+        if (writer?.jobs && writer?.jobs[0].job === "Writer") {
+            return writer;
+        } else if (writer?.job === "Writer") {
+            return writer;
+        }
+    });
     return (
         <>
             <SbIt>
                 <h6>Director: </h6>
                 <p>
-                    {crew.map((director) => {
-                        if (
-                            director?.jobs &&
-                            director?.jobs[0].job === "Director"
-                        ) {
-                            return (
-                                <a key={director.id} href="#">
-                                    {director.name || director.original_name}
-                                </a>
-                            );
-                        } else if (director.job === "Director") {
-                            return (
-                                <a key={director.id} href="#">
-                                    {director.name || director.original_name}
-                                </a>
-                            );
-                        }
-                    })}
+                    {directors?.slice(0, 3).map((director) => (
+                        <a key={director.id} href="#">
+                            {director.name}
+                        </a>
+                    ))}
                 </p>
             </SbIt>
             <SbIt>
                 <h6>Writer: </h6>
                 <p>
-                    {crew.map((director) => {
-                        if (
-                            director?.jobs &&
-                            director?.jobs[0].job === "Writer"
-                        ) {
-                            return (
-                                <a key={director.id} href="#">
-                                    {director.name || director.original_name}
-                                </a>
-                            );
-                        } else if (director.job === "Writer") {
-                            return (
-                                <a key={director.id} href="#">
-                                    {director.name || director.original_name}
-                                </a>
-                            );
-                        }
-                    })}
+                    {writers?.slice(0, 3).map((writer) => (
+                        <a key={writer.id} href="#">
+                            {writer.name}
+                        </a>
+                    ))}
                 </p>
             </SbIt>
             <SbIt>
                 <h6>Stars: </h6>
                 <p>
-                    {cast.slice(0, 5).map((cast) => (
+                    {cast?.slice(0, 5).map((cast) => (
                         <a key={cast.id} href="#">
-                            {cast.name || cast.original_name},{" "}
+                            {cast.name},{" "}
                         </a>
                     ))}
                 </p>
@@ -70,8 +73,8 @@ export default function MovieInfo({ movie }) {
             <SbIt>
                 <h6>Genres:</h6>
                 <p>
-                    {movie.genres.map((genre, index) => {
-                        if (index === movie.genres.length - 1) {
+                    {genres?.map((genre, index) => {
+                        if (index === genres.length - 1) {
                             return (
                                 <a key={genre.id} href="#">
                                     {genre.name}
@@ -86,25 +89,31 @@ export default function MovieInfo({ movie }) {
                     })}
                 </p>
             </SbIt>
-            {movie.first_air_date && (
+            {releaseDate && (
                 <SbIt>
-                    <h6>First Air Date</h6>
-                    <p>{movie.first_air_date}</p>
+                    <h6>Release Date:</h6>
+                    <p>{releaseDate}</p>
+                </SbIt>
+            )}
+            {firstAirDate && (
+                <SbIt>
+                    <h6>First Air Date:</h6>
+                    <p>{firstAirDate}</p>
+                </SbIt>
+            )}
+            {lastAirDate && (
+                <SbIt>
+                    <h6>Last Air Date:</h6>
+                    <p>{lastAirDate}</p>
                 </SbIt>
             )}
             <SbIt>
-                <h6>
-                    {movie.release_date ? "Release Date:" : "Last Air Date"}
-                </h6>
-                <p>{movie.release_date || movie.last_air_date}</p>
-            </SbIt>
-            <SbIt>
                 <h6>Run Time:</h6>
-                <p>{movie.runtime} min</p>
+                <p>{runTime} min</p>
             </SbIt>
             <SbIt>
                 <h6>MMPA Rating:</h6>
-                <p>{movie.vote_count}</p>
+                <p>{vote}</p>
             </SbIt>
             <SbIt>
                 <h6>Plot Keywords:</h6>

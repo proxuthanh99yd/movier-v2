@@ -1,4 +1,14 @@
 import { styled } from "styled-components";
+import PropTypes from "prop-types";
+
+TopbarFilter.propTypes = {
+    total: PropTypes.number,
+    grid: PropTypes.bool,
+    setGrid: PropTypes.func,
+    handleSort: PropTypes.func,
+    sort: PropTypes.string,
+    isAccountLayout: PropTypes.bool,
+};
 
 export default function TopbarFilter({
     total,

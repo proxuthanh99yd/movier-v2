@@ -4,28 +4,27 @@ import PagePaginate from "./PagePaginate";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {
-    fetchMoviesFavorite,
-    fetchSortMoviesFavorite,
     setPage,
     setSort,
-} from "../features/moviesFavoriteSlice";
+    fetchMoviesRated,
+} from "../features/moviesRatedSlice";
 
-export default function MoviesFavorite() {
+export default function MoviesRated() {
     const [grid, setGrid] = useState(true);
     const dispatch = useDispatch();
     const {
-        results: moviesFavorite,
+        results: moviesRated,
         status,
         sort,
         totalResults,
         page,
         totalPages,
-    } = useSelector((state) => state.moviesFavorite);
+        itemsLoading,
+    } = useSelector((state) => state.moviesRated);
+
     useEffect(() => {
-        dispatch(fetchMoviesFavorite());
-    }, []);
-    useEffect(() => {
-        dispatch(fetchSortMoviesFavorite(sort));
+        dispatch(fetchMoviesRated(sort));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sort]);
     const handleSort = (e) => {
         dispatch(setSort(e.target.value));
@@ -46,11 +45,12 @@ export default function MoviesFavorite() {
                 setGrid={setGrid}
                 isAccountLayout
             />
-            {moviesFavorite.length > 0 ? (
+            {moviesRated.length > 0 ? (
                 <MovieList
+                    itemsLoading={itemsLoading}
                     path={"movies"}
                     grid={grid}
-                    movies={moviesFavorite}
+                    movies={moviesRated}
                 />
             ) : (
                 <p style={{ color: "#fff" }}>no results</p>

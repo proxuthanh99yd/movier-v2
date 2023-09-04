@@ -6,9 +6,37 @@ import { useState } from "react";
 import { styled } from "styled-components";
 import PropTypes from "prop-types";
 MovieTab.propTypes = {
-    movie: PropTypes.object,
+    overview: PropTypes.string,
+    crew: PropTypes.array,
+    cast: PropTypes.array,
+    keywords: PropTypes.array,
+    genres: PropTypes.array,
+    releaseDate: PropTypes.string,
+    runTime: PropTypes.number,
+    vote: PropTypes.number,
+    name: PropTypes.string,
+    images: PropTypes.array,
+    videos: PropTypes.array,
+    reviews: PropTypes.object,
+    firstAirDate: PropTypes.string,
+    lastAirDate: PropTypes.string,
 };
-export default function MovieTab({ movie }) {
+export default function MovieTab({
+    overview,
+    crew,
+    cast,
+    keywords,
+    genres,
+    releaseDate,
+    runTime,
+    vote,
+    name,
+    images,
+    videos,
+    reviews,
+    firstAirDate,
+    lastAirDate,
+}) {
     const [tab, setTab] = useState("overview");
     return (
         <Wrapper>
@@ -34,29 +62,31 @@ export default function MovieTab({ movie }) {
                     </li>
                 </ul>
                 <div className="tab-content">
-                    {tab === "overview" && <TabOverview movie={movie} />}
-                    {tab === "reviews" && (
-                        <TabReviews
-                            name={
-                                movie?.belongs_to_collection?.name ||
-                                movie.name ||
-                                movie.original_name ||
-                                movie.title ||
-                                movie.original_title
-                            }
+                    {tab === "overview" && (
+                        <TabOverview
+                            overview={overview}
+                            crew={crew}
+                            cast={cast}
+                            keywords={keywords}
+                            genres={genres}
+                            firstAirDate={firstAirDate}
+                            lastAirDate={lastAirDate}
+                            releaseDate={releaseDate}
+                            runTime={runTime}
+                            vote={vote}
+                            reviews={reviews}
+                            images={images}
                         />
+                    )}
+                    {tab === "reviews" && (
+                        <TabReviews reviews={reviews} name={name} />
                     )}
                     {tab === "cast" && (
-                        <TabCast
-                            name={
-                                movie.name ||
-                                movie.original_name ||
-                                movie.title ||
-                                movie.original_title
-                            }
-                        />
+                        <TabCast crew={crew} cast={cast} name={name} />
                     )}
-                    {tab === "media" && <TabMedia />}
+                    {tab === "media" && (
+                        <TabMedia name={name} images={images} videos={videos} />
+                    )}
                 </div>
             </div>
         </Wrapper>

@@ -1,5 +1,8 @@
 import { styled } from "styled-components";
 import { images } from "../../imageConfig";
+import PropTypes from "prop-types";
+
+HeroSinglePage.propTypes = { image: PropTypes.string };
 
 export default function HeroSinglePage({ image }) {
     return (

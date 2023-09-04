@@ -1,5 +1,10 @@
 import { styled } from "styled-components";
 import { images } from "../../imageConfig";
+import PropTypes from "prop-types";
+
+MovieImg.propTypes = {
+    image: PropTypes.string,
+};
 
 export default function MovieImg({ image }) {
     return (

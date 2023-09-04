@@ -4,6 +4,26 @@ import DatePicker from "react-datepicker";
 import MultiRangeSlider from "multi-range-slider-react";
 import "react-datepicker/dist/react-datepicker.css";
 import AsyncSelect from "react-select/async";
+import PropTypes from "prop-types";
+
+SidebarFilter.propTypes = {
+    handleFilter: PropTypes.func,
+    withKeywords: PropTypes.array,
+    promiseOptions: PropTypes.any,
+    handleKeywords: PropTypes.func,
+    withGenres: PropTypes.array,
+    handleGenres: PropTypes.func,
+    options: PropTypes.array,
+    withVoteGte: PropTypes.number,
+    withVoteLte: PropTypes.number,
+    handleVote: PropTypes.func,
+    withDateGte: PropTypes.any,
+    handleDateFrom: PropTypes.func,
+    withDateLte: PropTypes.any,
+    handleDateTo: PropTypes.func,
+    handleClearSearch: PropTypes.func,
+};
+
 export default function SidebarFilter({
     handleFilter,
     withKeywords,

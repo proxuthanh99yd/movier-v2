@@ -1,6 +1,5 @@
 import { styled } from "styled-components";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 
 Star.propTypes = {
     number: PropTypes.number,
@@ -18,8 +17,10 @@ function Star({ number }) {
         </div>
     );
 }
-export default function UserReviews() {
-    const { reviews } = useSelector((state) => state.movie);
+
+UserReviews.propTypes = { reviews: PropTypes.array };
+
+export default function UserReviews({ reviews }) {
     return (
         <>
             <div className="title-hd-sm">
@@ -33,12 +34,12 @@ export default function UserReviews() {
                 <ReviewItem key={review.id}>
                     {/* <h3>{review.author|| review.author_details.username}</h3> */}
 
-                    <Star number={review.author_details.rating} />
+                    <Star number={review.authorDetails.rating} />
                     <p className="time">
-                        {review.created_at} by{" "}
+                        {review.createdAt} by{" "}
                         <a href="#">
                             {" "}
-                            {review.author || review.author_details.username}
+                            {review.author || review.authorDetails.username}
                         </a>
                     </p>
                     <p>{review.content}</p>

@@ -1,12 +1,10 @@
 import { styled } from "styled-components";
-import { useSelector } from "react-redux";
 import { images as imageConfig } from "../../../imageConfig";
-export default function MovieCast() {
-    const { cast, status } = useSelector((state) => state.movie);
+import PropTypes from "prop-types";
 
-    if (status === "loading") {
-        return <p>loading...</p>;
-    }
+MovieCast.propTypes = { cast: PropTypes.array };
+
+export default function MovieCast({ cast }) {
     return (
         <>
             <div className="title-hd-sm">
@@ -24,23 +22,29 @@ export default function MovieCast() {
                             id,
                             character,
                             name,
-                            original_name,
                             profile_path,
+                            profilePath,
+                            knownForDepartment,
                             known_for_department,
+                            original_name,
                         }) => (
                             <div key={id} className="cast-it">
                                 <div className="cast-left">
                                     <img
-                                        src={
-                                            imageConfig.secure_base_url +
-                                            imageConfig.profile_sizes[1] +
-                                            profile_path
-                                        }
+                                        src={`${imageConfig.secure_base_url}${
+                                            imageConfig.profile_sizes[1]
+                                        }${profilePath || profile_path}`}
                                         alt=""
                                     />
                                     <a href="#">{name || original_name}</a>
                                 </div>
-                                <p>... {character || known_for_department}.</p>
+                                <p>
+                                    ...{" "}
+                                    {character ||
+                                        knownForDepartment ||
+                                        known_for_department}
+                                    .
+                                </p>
                             </div>
                         )
                     )}

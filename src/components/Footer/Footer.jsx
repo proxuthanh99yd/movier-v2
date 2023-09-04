@@ -108,9 +108,6 @@ const Wrapper = styled.footer`
     }
     .flex-parent-ft {
         padding: 80px 0 60px 0;
-        display: -webkit-flex;
-        display: -moz-box;
-        display: -ms-flexbox;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -177,9 +174,6 @@ const Wrapper = styled.footer`
         }
     }
     .ft-copyright {
-        display: -webkit-flex;
-        display: -moz-box;
-        display: -ms-flexbox;
         display: flex;
         align-items: center;
         justify-content: space-between;

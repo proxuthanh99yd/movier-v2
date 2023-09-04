@@ -1,27 +1,61 @@
+import { useState } from "react";
 import { styled } from "styled-components";
+import PropTypes from "prop-types";
 
-export default function MovieRate({ rate }) {
+MovieRate.propTypes = {
+    id: PropTypes.number,
+    rated: PropTypes.number,
+    vote: PropTypes.number,
+    handleRated: PropTypes.func,
+};
+
+export default function MovieRate({ rated, vote, handleRated }) {
+    const [hover, setHover] = useState(0);
+    const handleHover = (i) => {
+        setHover(i);
+    };
     return (
-        <Wrapper>
-            <div className="rate">
-                <i className="fa-solid fa-star"></i>
-                <p>
-                    <span>{rate ? rate.toFixed(1) : "???"}</span> /10
-                    <br />
-                    <span className="rv">56 Reviews</span>
-                </p>
-            </div>
-            <div className="rate-star">
-                <p>Rate This Movie: </p>
-                {Array.from({ length: 10 }, (_, i) => {
-                    if (rate >= i + 1) {
-                        return <i key={i} className="fa-solid fa-star"></i>;
-                    } else {
-                        return <i key={i} className="fa-regular fa-star"></i>;
-                    }
-                })}
-            </div>
-        </Wrapper>
+        <>
+            <Wrapper>
+                <div className="rate">
+                    <i className="fa-solid fa-star"></i>
+                    <p>
+                        <span>{vote ? vote.toFixed(0) : "???"}</span> /10
+                        <br />
+                        <span className="rv">56 Reviews</span>
+                    </p>
+                </div>
+                <div className="rate">
+                    <p>
+                        <span>{rated ? rated.toFixed(0) : "???"}</span> /10
+                        <br />
+                        <span className="rv">Your Rate</span>
+                    </p>
+                </div>
+                <div className="rate-star">
+                    <p>Rate This Movie: </p>
+                    {Array.from({ length: 10 }, (_, i) => (
+                        <i
+                            style={{ cursor: "pointer" }}
+                            className={
+                                hover
+                                    ? hover >= i + 1
+                                        ? "fa-solid fa-star"
+                                        : "fa-regular fa-star"
+                                    : vote >= i + 1
+                                    ? "fa-solid fa-star"
+                                    : "fa-regular fa-star"
+                            }
+                            onMouseEnter={() => handleHover(i + 1)}
+                            onMouseOut={() => setHover(0)}
+                            onClick={() => handleRated(i + 1)}
+                            key={i}
+                            data-text={i + 1}
+                        ></i>
+                    ))}
+                </div>
+            </Wrapper>
+        </>
     );
 }
 

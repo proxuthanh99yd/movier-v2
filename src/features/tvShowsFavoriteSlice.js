@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getMoviesFavoriteApi } from '../Services/tmdbService';
+import { getTvShowsFavoriteApi } from '../Services/tmdbService';
 
-export const fetchMoviesFavorite = createAsyncThunk('account/fetchMoviesFavorite',
+export const fetchTvShowsFavorite = createAsyncThunk('account/fetchTvShowsFavorite',
     async (sort) => {
         const auth = JSON.parse(localStorage.getItem('auth'))
         if (!auth.sessionId) {
@@ -12,12 +12,12 @@ export const fetchMoviesFavorite = createAsyncThunk('account/fetchMoviesFavorite
             results,
             total_pages: totalPages,
             total_results: totalResults
-        } = await getMoviesFavoriteApi(auth.accountId, auth.sessionId, sort);
+        } = await getTvShowsFavoriteApi(auth.accountId, auth.sessionId, sort);
         return { page, results, totalPages, totalResults }
     })
 
-export const moviesFavoriteSlice = createSlice({
-    name: 'moviesFavorite',
+export const tvShowsFavoriteSlice = createSlice({
+    name: 'tvShowsFavorite',
     initialState: {
         status: "loading",
         page: 0,
@@ -32,7 +32,7 @@ export const moviesFavoriteSlice = createSlice({
     },
     reducers: {
         checkIsFavorite: (state, { payload }) => {
-            const isFavorite = state.results.filter((movie) => movie.id === payload);
+            const isFavorite = state.results.filter((TvShow) => TvShow.id === payload);
             state.isFavorite = Boolean(isFavorite.length);
 
         },
@@ -46,7 +46,7 @@ export const moviesFavoriteSlice = createSlice({
         addToFavorite: (state, { payload }) => {
             state.results.push(payload)
         },
-        clearMoviesFavorite: (state) => {
+        clearTvShowsFavorite: (state) => {
             return {
                 ...state,
                 status: "loading",
@@ -65,13 +65,13 @@ export const moviesFavoriteSlice = createSlice({
     },
     extraReducers(builder) {
         builder
-            .addCase(fetchMoviesFavorite.fulfilled, (state, { payload }) => {
+            .addCase(fetchTvShowsFavorite.fulfilled, (state, { payload }) => {
                 return { ...state, ...payload, status: 'succeeded', }
             })
     }
 
 })
 
-export const { checkIsFavorite, setSort, setPage, clearMoviesFavorite, addToFavorite } = moviesFavoriteSlice.actions;
-const moviesFavoriteReducer = moviesFavoriteSlice.reducer
-export default moviesFavoriteReducer
+export const { checkIsFavorite, setSort, setPage, clearTvShowsFavorite, addToFavorite } = tvShowsFavoriteSlice.actions;
+const tvShowsFavoriteReducer = tvShowsFavoriteSlice.reducer
+export default tvShowsFavoriteReducer

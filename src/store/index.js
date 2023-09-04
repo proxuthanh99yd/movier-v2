@@ -1,32 +1,36 @@
 import { configureStore } from '@reduxjs/toolkit'
 import tvShowsReducer from '../features/tvShowsSlice'
 import movieReducer from '../features/movieSingleSlice'
-import userReducer from '../features/userSlice'
 import accountReducer from '../features/accountSlice'
 import trendingMoviesReducer from '../features/trendingMoviesSlice'
-import moviesPopularReducer from '../features/moviesPopularSlice'
-import tvShowsPopularReducer from '../features/tvShowsPopularSlice'
-import trendingPersonReducer from '../features/trendingPersonSlice'
 import movieGenresReducer from '../features/movieGenresSlice'
 import moviesFavoriteReducer from '../features/moviesFavoriteSlice'
-import moviesTopRatedReducer from '../features/moviesTopRatedSlice'
-import moviesUpcomingReducer from '../features/moviesUpcomingSlice'
-import moviesNowPlayingReducer from '../features/moviesNowPlayingSlice'
+import moviesReducer from '../features/moviesSlice'
+import tvShowGenresReducer from '../features/tvShowGenresSlice'
+import searchReducer from '../features/searchSlice'
+import movieRatedReducer from '../features/moviesRatedSlice'
+import tvShowSingleReducer from '../features/tvShowSingleSlice'
+import tvShowsFavoriteReducer from '../features/tvShowsFavoriteSlice'
+import tvShowsRatedReducer from '../features/tvShowsRatedSlice'
+import peopleReducer from '../features/peopleSlice'
+import personReducer from '../features/personSlice'
 
 export default configureStore({
     reducer: {
-        tvShows: tvShowsReducer,
         movie: movieReducer,
-        auth: userReducer,
+        tvShow: tvShowSingleReducer,
         account: accountReducer,
         trendingMovies: trendingMoviesReducer,
-        moviesPopular: moviesPopularReducer,
-        tvShowsPopular: tvShowsPopularReducer,
-        trendingPerson: trendingPersonReducer,
+        movies: moviesReducer,
+        tvShows: tvShowsReducer,
+        people: peopleReducer,
         movieGenres: movieGenresReducer,
         moviesFavorite: moviesFavoriteReducer,
-        moviesTopRated: moviesTopRatedReducer,
-        moviesUpcoming: moviesUpcomingReducer,
-        moviesNowPlaying: moviesNowPlayingReducer
+        tvShowGenres: tvShowGenresReducer,
+        search: searchReducer,
+        moviesRated: movieRatedReducer,
+        tvShowsFavorite: tvShowsFavoriteReducer,
+        tvShowsRated: tvShowsRatedReducer,
+        person: personReducer
     }
 })
