@@ -73,7 +73,10 @@ export default function MovieSinglePage() {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-4 col-md-12 col-sm-12">
-                            <MovieImg image={posterPath} />
+                            <MovieImg
+                                video={videos[0]?.key}
+                                image={posterPath}
+                            />
                         </div>
                         <div className="col-lg-8 col-md-12 col-sm-12">
                             <div className="main-content">
